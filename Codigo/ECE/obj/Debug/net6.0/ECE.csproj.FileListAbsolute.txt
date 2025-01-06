@@ -112,3 +112,4 @@ C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\refint\ECE.dll
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.pdb
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.genruntimeconfig.cache
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ref\ECE.dll
+C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.sourcelink.json

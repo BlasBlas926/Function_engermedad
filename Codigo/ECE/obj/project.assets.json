@@ -568,11 +568,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\ECE.csproj",
+      "projectUniqueName": "C:\\Users\\joblas\\Pictures\\Ejercicio\\Codigo\\ECE\\ECE.csproj",
       "projectName": "ECE",
-      "projectPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\ECE.csproj",
+      "projectPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\Codigo\\ECE\\ECE.csproj",
       "packagesPath": "C:\\Users\\joblas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\obj\\",
+      "outputPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\Codigo\\ECE\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -650,14 +650,10 @@
   },
   "logs": [
     {
-      "code": "NU1903",
+      "code": "NU1900",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "El paquete \"Npgsql\" 6.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c",
-      "libraryId": "Npgsql",
-      "targetGraphs": [
-        "net6.0"
-      ]
+      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json."
     }
   ]
 }

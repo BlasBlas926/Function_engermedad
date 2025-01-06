@@ -90,8 +90,99 @@ namespace ECE.Model.DAO
             }
             return resultOperation;
         }
-        ///Fata el medo de insertar, actualizar////
+        ///EnfermedadCronica
+        public async Task<ResultOperation<List<EnfermedadCronica>>> GetCatalogoCronica()
+        {
+            ResultOperation<List<EnfermedadCronica>> resultOperation = new ResultOperation<List<EnfermedadCronica>>();
 
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_todos_enfermedades", null);
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    List<EnfermedadCronica> lista = new List<EnfermedadCronica>();
+
+                    foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+                    {
+                        EnfermedadCronica aux = new EnfermedadCronica
+                        {
+                            id_enf_cronica = (int)item["id_enf_cronica"],
+                            nombre = item["nombre"].ToString(),
+                            descripcion = item["descripcion"].ToString(),
+                            estado = (bool)item["estado"],
+                            fecha_registro2 = (DateTime)item["fecha_registro"],
+                            fecha_inicio2 = (DateTime)item["fecha_inicio"],
+                            fecha_actualizacion2 = (DateTime)item["fecha_actualizacion"],
+                        };
+                        lista.Add(aux);
+                    }
+
+                    resultOperation.Result = lista;
+                }
+                else
+                {
+                    resultOperation.Result = null;
+                    resultOperation.Success = false;
+                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+                }
+            }
+            else
+            {
+                if (respuestaBD.ExisteError)
+                    Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
+
+            return resultOperation;
+        }
+
+        //Diccionario
+        public async Task<ResultOperation<Dictionary<int, Tuple<string, string, bool>>>> GetObtenerDiccionario()
+        {
+            ResultOperation<Dictionary<int, Tuple<string, string, bool>>> resultOperation = new ResultOperation<Dictionary<int, Tuple<string, string, bool>>>();
+
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_todos_enfermedades", null);
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    Dictionary<int, Tuple<string, string, bool>> dictionary = new Dictionary<int, Tuple<string, string, bool>>();
+
+                    foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+                    {
+                        int id = (int)item["id_enf_cronica"];
+                        string nombre = item["nombre"].ToString();
+                        string descripcion = item["descripcion"].ToString();
+                        bool estado = (bool)item["estado"];
+
+                        var value = new Tuple<string, string, bool>(nombre, descripcion, estado);
+                        dictionary.Add(id, value);
+                    }
+
+                    resultOperation.Result = dictionary;
+                }
+                else
+                {
+                    resultOperation.Result = null;
+                    resultOperation.Success = false;
+                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+                }
+            }
+            else
+            {
+                if (respuestaBD.ExisteError)
+                    Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
+
+            return resultOperation;
+        }
         public async Task<ResultOperation<int>> InsertAsync(EnfermedadCronica enfermedadCronica)
         {
             ResultOperation<int> resultOperation = new ResultOperation<int>();
@@ -133,6 +224,7 @@ namespace ECE.Model.DAO
                     new ParameterPGsql("p_nombre", NpgsqlTypes.NpgsqlDbType.Varchar,enfermedadCronica.nombre),
                     new ParameterPGsql("p_descripcion", NpgsqlTypes.NpgsqlDbType.Varchar,enfermedadCronica.descripcion),
                     new ParameterPGsql("p_estado", NpgsqlTypes.NpgsqlDbType.Boolean,enfermedadCronica.estado),
+                    new ParameterPGsql("p_fecha_actualizacion", NpgsqlTypes.NpgsqlDbType.Date,enfermedadCronica.fecha_actualizacion2),
 
                 });
             RespuestaBD respuestaBD = await respuestaBDTask;

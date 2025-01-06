@@ -110,6 +110,149 @@ namespace TsaakAPI.Model.DAO
             }
             return resultOperation;
         }
+        ///Lista de enfermedades cardiovasculares
+        // public async Task<ResultOperation<List<VMCatalog>>> GetObtenerEnfermedad()
+        // {
+        //     ResultOperation<List<VMCatalog>> resultOperation = new ResultOperation<List<VMCatalog>>();
+
+        //     Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedad_cardiovascular", null);
+        //     RespuestaBD respuestaBD = await respuestaBDTask;
+        //     resultOperation.Success = !respuestaBD.ExisteError;
+        //     if (!respuestaBD.ExisteError)
+        //     {
+        //         if (respuestaBD.Data.Tables.Count > 0
+        //          && respuestaBD.Data.Tables[0].Rows.Count > 0)
+        //         {
+        //             List<VMCatalog> lista = new List<VMCatalog>();
+        //             foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+        //             {
+        //                 VMCatalog aux = new VMCatalog
+        //                 {
+        //                     Id = (int)item["id_enf_cardiovascular"],
+        //                     Nombre = item["nombre"].ToString(),
+        //                     Descripcion = item["descripcion"].ToString(),
+        //                     Estado = item["estado"] as bool?,
+
+        //                 };
+        //                 lista.Add(aux);
+        //             }
+        //             resultOperation.Result = lista;
+        //         }
+        //         else
+        //         {
+        //             resultOperation.Result = null;
+        //             resultOperation.Success = false;
+        //             resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+        //         }
+
+        //     }
+        //     else
+        //     {
+        //         //TODO Agregar error en el log             
+        //         if (respuestaBD.ExisteError)
+        //             Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+        //         throw new Exception(respuestaBD.Mensaje);
+        //     }
+        //     return resultOperation;
+        // }
+
+        ///Obtener catalogo de enfermedades cardiovasculares
+        public async Task<ResultOperation<List<EnfermedadCardiovascular>>> GetCatalogoCardiovasculares()
+        {
+            ResultOperation<List<EnfermedadCardiovascular>> resultOperation = new ResultOperation<List<EnfermedadCardiovascular>>();
+
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedad_cardiovascular", null);
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    List<EnfermedadCardiovascular> lista = new List<EnfermedadCardiovascular>();
+
+                    foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+                    {
+                        EnfermedadCardiovascular aux = new EnfermedadCardiovascular
+                        {
+                            id_enf_cardiovascular = (int)item["id_enf_cardiovascular"],
+                            nombre = item["nombre"].ToString(),
+                            descripcion = item["descripcion"].ToString(),
+                            estado = (bool)item["estado"],
+                            fecha_registro2 = (DateTime)item["fecha_registro"],
+                            fecha_inicio2 = (DateTime)item["fecha_inicio"],
+                            fecha_actualizacion2 = (DateTime)item["fecha_actualizacion"],
+                        };
+                        lista.Add(aux);
+                    }
+
+                    resultOperation.Result = lista;
+                }
+                else
+                {
+                    resultOperation.Result = null;
+                    resultOperation.Success = false;
+                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+                }
+            }
+            else
+            {
+                if (respuestaBD.ExisteError)
+                    Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
+
+            return resultOperation;
+        }
+        ///Diccionario de enfermedades cardiovasculares
+
+        public async Task<ResultOperation<Dictionary<int, Tuple<string, string, bool>>>> GetObtener()
+        {
+            ResultOperation<Dictionary<int, Tuple<string, string, bool>>> resultOperation = new ResultOperation<Dictionary<int, Tuple<string, string, bool>>>();
+
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedad_cardiovascular", null);
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    Dictionary<int, Tuple<string, string, bool>> dictionary = new Dictionary<int, Tuple<string, string, bool>>();
+
+                    foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+                    {
+                        int id = (int)item["id_enf_cardiovascular"];
+                        string nombre = item["nombre"].ToString();
+                        string descripcion = item["descripcion"].ToString();
+                        bool estado = (bool)item["estado"];
+
+                        var value = new Tuple<string, string, bool>(nombre, descripcion, estado);
+                        dictionary.Add(id, value);
+                    }
+
+                    resultOperation.Result = dictionary;
+                }
+                else
+                {
+                    resultOperation.Result = null;
+                    resultOperation.Success = false;
+                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+                }
+            }
+            else
+            {
+                if (respuestaBD.ExisteError)
+                    Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
+
+            return resultOperation;
+        }
+
+
+
+
         //Falta el de agregar, actualizar
         public async Task<ResultOperation<int>> InsertAsync(EnfermedadCardiovascular enfermedad)
         {
@@ -154,7 +297,7 @@ namespace TsaakAPI.Model.DAO
                     new ParameterPGsql("p_nombre", NpgsqlTypes.NpgsqlDbType.Varchar,enfermedad.nombre),
                     new ParameterPGsql("p_descripcion", NpgsqlTypes.NpgsqlDbType.Varchar,enfermedad.descripcion),
                     new ParameterPGsql("p_estado", NpgsqlTypes.NpgsqlDbType.Boolean,enfermedad.estado),
-
+                    new ParameterPGsql("p_fecha_actualizacion", NpgsqlTypes.NpgsqlDbType.Date,enfermedad.fecha_actualizacion2),
                 });
             RespuestaBD respuestaBD = await respuestaBDTask;
             resultOperation.Success = !respuestaBD.ExisteError;

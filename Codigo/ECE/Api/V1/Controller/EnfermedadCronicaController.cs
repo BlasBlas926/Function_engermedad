@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using ECE.DTO;
 using ECE.Entities;
 using ECE.Model.DAO;
 using Microsoft.AspNetCore.Mvc;
@@ -21,17 +22,115 @@ namespace ECE.Api.V1.Controller
             _enfermedadCronicaDao = enfermedadCronicaDao;
             _configuration = configuration;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetEnfermedadCronica()
+        [HttpGet("Paginacion")]
+        public async Task<IActionResult> GetEnfermedadCronica([FromQuery] PaginacionDTO paginacion)
         {
-            var result = await _enfermedadCronicaDao.GetAllAsync();
-            if (result.Success)
+            try
             {
-                return Ok(result.Result);
+                var result = await _enfermedadCronicaDao.GetAllAsync();
+
+                if (result.Success && result.Result != null)
+                {
+                    var totalItems = result.Result.Count();
+                    var pagedItems = result.Result
+                        .Skip((paginacion.Pagina - 1) * paginacion.RecordsPorPagina)
+                        .Take(paginacion.RecordsPorPagina)
+                        .ToList();
+
+                    var pager = new ActivoFijoAPI.Util.Pager(
+                        paginacion.Pagina,
+                        paginacion.RecordsPorPagina,
+                        totalItems
+                    );
+
+                    var response = new ActivoFijoAPI.Util.DataTableView<TsaakAPI.Entities.VMCatalog>(
+                        pager,
+                        pagedItems
+                    );
+
+                    return Ok(response);
+                }
+
+                return NoContent();
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(new { message = result.Messages });
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado.",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("ObtenerEnfermedadCronica")]
+        public async Task<IActionResult> GetEnfermedades()
+        {
+            try
+            {
+                var result = await _enfermedadCronicaDao.GetAllAsync();
+
+                if (result.Success && result.Result != null)
+                {
+                    return Ok(result.Result);
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado.",
+                    details = ex.Message
+                });
+            }
+        }
+        [HttpGet("ObtenerEnfermedadCronicaCompleta")]
+        public async Task<IActionResult> GetEnfermedadesCompleta()
+        {
+            try
+            {
+                var result = await _enfermedadCronicaDao.GetCatalogoCronica();
+
+                if (result.Success && result.Result != null)
+                {
+                    return Ok(result.Result);
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado.",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("diccionario")]
+        public async Task<IActionResult> GetDiccionario()
+        {
+            try
+            {
+                var result = await _enfermedadCronicaDao.GetObtenerDiccionario();
+
+                if (result.Success && result.Result != null)
+                {
+                    return Ok(result.Result);
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado.",
+                    details = ex.Message
+                });
             }
         }
         [HttpGet("{id}")]
@@ -65,10 +164,11 @@ namespace ECE.Api.V1.Controller
             else
             {
                 // Si no fue exitosa, devuelve un error con el detalle
-                return BadRequest(new { message = result.Messages });
+                return NoContent();
             }
+
         }
-        [HttpPatch("id")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateEnfermedad(EnfermedadCronica enfermedad)
         {
             // Llamada al DAO para actualizar el registro
@@ -85,6 +185,7 @@ namespace ECE.Api.V1.Controller
                 return BadRequest(new { message = result.Messages });
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEnfermedad(int id)
         {

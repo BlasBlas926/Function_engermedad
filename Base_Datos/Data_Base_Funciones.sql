@@ -49,16 +49,16 @@ ALTER FUNCTION admece.agregar_enfermedad(character varying, character varying, d
 
 
 CREATE OR REPLACE FUNCTION admece.actualizar_enfermedad(
-	p_id_enf_cronica integer,
-	p_nombre character varying,
-	p_descripcion character varying,
-	p_estado boolean)
-    RETURNS TABLE(id_enf_cronica integer, nombre character varying, descripcion character varying, estado boolean) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
+    p_id_enf_cronica integer,
+    p_nombre character varying,
+    p_descripcion character varying,
+    p_estado boolean,
+    p_fecha_actualizacion date)
+RETURNS TABLE(id_enf_cronica integer, nombre character varying, descripcion character varying, estado boolean, fecha_actualizacion date) 
+LANGUAGE 'plpgsql'
+COST 100
+VOLATILE PARALLEL UNSAFE
+ROWS 1000
 AS $BODY$
 BEGIN
     RETURN QUERY
@@ -66,18 +66,21 @@ BEGIN
     SET 
         nombre = COALESCE(p_nombre, t.nombre),
         descripcion = COALESCE(p_descripcion, t.descripcion),
-        estado = COALESCE(p_estado, t.estado)
+        estado = COALESCE(p_estado, t.estado),
+        fecha_actualizacion = COALESCE(p_fecha_actualizacion, t.fecha_actualizacion)  -- Corregido aquí
     WHERE t.id_enf_cronica = p_id_enf_cronica
     RETURNING 
         t.id_enf_cronica, 
         t.nombre, 
         t.descripcion, 
-        t.estado;
+        t.estado,
+        t.fecha_actualizacion;
 END;
 $BODY$;
 
-ALTER FUNCTION admece.actualizar_enfermedad(integer, character varying, character varying, boolean)
+ALTER FUNCTION admece.actualizar_enfermedad(integer, character varying, character varying, boolean, date)
     OWNER TO postgres;
+
 
 
 
@@ -188,8 +191,9 @@ CREATE OR REPLACE FUNCTION admece.actualizar_enfermedad_cardiovascular(
 	p_id_enf_cardiovascular integer,
 	p_nombre character varying,
 	p_descripcion character varying,
-	p_estado boolean)
-    RETURNS TABLE(id_enf_cardiovascular integer, nombre character varying, descripcion character varying, estado boolean) 
+	p_estado boolean,
+	p_fecha_actualizacion date)
+    RETURNS TABLE(id_enf_cardiovascular integer, nombre character varying, descripcion character varying, estado boolean, fecha_actualizacio date) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -202,17 +206,19 @@ BEGIN
     SET 
         nombre = COALESCE(p_nombre, t.nombre),
         descripcion = COALESCE(p_descripcion, t.descripcion),
-        estado = COALESCE(p_estado, t.estado)
+        estado = COALESCE(p_estado, t.estado),
+		fecha_actualizacion = COALESCE(p_fecha_actualizacion, t.fecha_actualizacion)
     WHERE t.id_enf_cardiovascular = p_id_enf_cardiovascular
     RETURNING 
         t.id_enf_cardiovascular, 
         t.nombre, 
         t.descripcion, 
-        t.estado;
+        t.estado,
+		t.fecha_actualizacion;
 END;
 $BODY$;
 
-ALTER FUNCTION admece.actualizar_enfermedad_cardiovascular(integer, character varying, character varying, boolean)
+ALTER FUNCTION admece.actualizar_enfermedad_cardiovascular(integer, character varying, character varying, boolean, date)
     OWNER TO postgres;
 
 
