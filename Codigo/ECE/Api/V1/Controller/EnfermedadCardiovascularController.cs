@@ -91,7 +91,7 @@ namespace TsaakAPI.Api.V1.Controller
         {
               try
             {
-                var result = await _enfermedadCardiovascularDao.GetObtenerDiccionario();
+                var result = await _enfermedadCardiovascularDao.GetDiccionario();
                 if (result.Success && result.Result != null)
                 {
                     return Ok(result);

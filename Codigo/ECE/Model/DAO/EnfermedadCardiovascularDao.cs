@@ -252,7 +252,7 @@ namespace TsaakAPI.Model.DAO
 
             ResultOperation<Dictionary<int, string>> resultOperation = new ResultOperation<Dictionary<int, string>>();
 
-            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.fn_get_all");
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedad_cardiovascular");
             RespuestaBD respuestaBD = await respuestaBDTask;
             resultOperation.Success = !respuestaBD.ExisteError;
 
@@ -335,51 +335,7 @@ namespace TsaakAPI.Model.DAO
         //     return resultOperation;
         // }
 
-        public async Task<ResultOperation<Dictionary<int, string>>> GetObtenerDiccionario()
-        {
-            // Crear una lista de diccionarios
-            Dictionary<int, string> diccionario = new Dictionary<int, string>();
-
-            ResultOperation<Dictionary<int, string>> resultOperation = new ResultOperation<Dictionary<int, string>>();
-
-            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedad_cardiovascular");
-            RespuestaBD respuestaBD = await respuestaBDTask;
-            resultOperation.Success = !respuestaBD.ExisteError;
-
-            if (!respuestaBD.ExisteError)
-            {
-                if (respuestaBD.Data.Tables.Count > 0
-                && respuestaBD.Data.Tables[0].Rows.Count > 0)
-                {
-
-                    for (int i = 0; i < respuestaBD.Data.Tables[0].Rows.Count; i++)
-                    {
-                        var id = (int)respuestaBD.Data.Tables[0].Rows[i]["id_enf_cardiovascular"];
-                        var nombre = respuestaBD.Data.Tables[0].Rows[i]["nombre"].ToString();
-
-                        diccionario.Add(id, nombre);
-                    }
-                    resultOperation.Result = diccionario;
-                }
-
-
-                else
-                {
-                    resultOperation.Result = null;
-                    resultOperation.Success = false;
-                    resultOperation.AddErrorMessage($"No se encontraron registros en la tabla.");
-                }
-            }
-            else
-            {
-                // Manejo de errores (log, excepciones, etc.)
-                Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
-                throw new Exception(respuestaBD.Mensaje);
-            }
-
-            return resultOperation;
-        }
-
+       
 
         //Falta el de agregar, actualizar
         public async Task<ResultOperation<int>> InsertAsync(EnfermedadCardiovascular enfermedad)
