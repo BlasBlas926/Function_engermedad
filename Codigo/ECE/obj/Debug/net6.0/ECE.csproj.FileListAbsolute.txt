@@ -96,6 +96,7 @@ C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.AssemblyInfo.
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.csproj.CoreCompileInputs.cache
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.sourcelink.json
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\scopedcss\bundle\ECE.styles.css
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\staticwebassets.development.json
@@ -112,4 +113,3 @@ C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\refint\ECE.dll
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.pdb
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.genruntimeconfig.cache
 C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ref\ECE.dll
-C:\Users\joblas\Pictures\Ejercicio\codigo\ECE\obj\Debug\net6.0\ECE.sourcelink.json

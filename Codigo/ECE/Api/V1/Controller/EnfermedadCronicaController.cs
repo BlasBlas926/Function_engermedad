@@ -72,7 +72,7 @@ namespace ECE.Api.V1.Controller
 
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
 
                 return NoContent();
@@ -95,7 +95,7 @@ namespace ECE.Api.V1.Controller
 
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
 
                 return NoContent();
@@ -110,27 +110,26 @@ namespace ECE.Api.V1.Controller
             }
         }
 
+        // [HttpGet("diccionario")]
+        // public async Task<IActionResult> GetObtenerDiccionario()
+        // {
+        //     return Ok();
+        // }
         [HttpGet("diccionario")]
-        public async Task<IActionResult> GetDiccionario()
+        public async Task<IActionResult> GetObtenerDiccionarios()
         {
             try
             {
                 var result = await _enfermedadCronicaDao.GetObtenerDiccionario();
-
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
-
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    message = "Ocurrió un error inesperado.",
-                    details = ex.Message
-                });
+                return StatusCode(500, new { message = "Ocurrió un error inesperado.", details = ex.Message });
             }
         }
         [HttpGet("{id}")]
@@ -142,7 +141,7 @@ namespace ECE.Api.V1.Controller
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
-                return Ok(result.Result);
+                return Ok(result);
             }
             else
             {
@@ -159,7 +158,7 @@ namespace ECE.Api.V1.Controller
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
-                return Ok(result.Result);
+                return Ok(result);
             }
             else
             {
@@ -177,7 +176,7 @@ namespace ECE.Api.V1.Controller
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
-                return Ok(result.Result);
+                return Ok(result);
             }
             else
             {
@@ -195,7 +194,7 @@ namespace ECE.Api.V1.Controller
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
-                return Ok(result.Result);
+                return Ok(result);
             }
             else
             {

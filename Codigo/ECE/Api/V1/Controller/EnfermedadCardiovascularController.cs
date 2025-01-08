@@ -58,7 +58,7 @@ namespace TsaakAPI.Api.V1.Controller
 
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
 
                 return NoContent();
@@ -70,56 +70,31 @@ namespace TsaakAPI.Api.V1.Controller
         }
 
         [HttpGet("Paginacion")]
-        public async Task<IActionResult> GetEnfermedadCardiovascular([FromQuery] PaginacionDTO paginacion)
+        public async Task<IActionResult> GetEnfermedadCardiovascular([FromQuery] int page, [FromQuery] int fetch)
         {
-            try
+
+            var result = await _enfermedadCardiovascularDao.GetObtenerEnfermedad(page, fetch);
+            if (result.Success)
             {
-                var result = await _enfermedadCardiovascularDao.GetAllAsync();
-
-                if (result.Success && result.Result != null)
-                {
-                    var totalItems = result.Result.Count();
-                    var pagedItems = result.Result
-                        .Skip((paginacion.Pagina - 1) * paginacion.RecordsPorPagina)
-                        .Take(paginacion.RecordsPorPagina)
-                        .ToList();
-
-                    var pager = new ActivoFijoAPI.Util.Pager(
-                        paginacion.Pagina,
-                        paginacion.RecordsPorPagina,
-                        totalItems
-                    );
-
-                    var response = new ActivoFijoAPI.Util.DataTableView<TsaakAPI.Entities.VMCatalog>(
-                        pager,
-                        pagedItems
-                    );
-
-                    return Ok(response);
-                }
-
-                return NoContent();
+                // Si es exitosa, devuelve el resultado con un estado 200 OK
+                return Ok(result);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, new
-                {
-                    message = "Ocurrió un error inesperado.",
-                    details = ex.Message
-                });
+                // Si no fue exitosa, devuelve un error con el detalle
+                return BadRequest(new { message = result.Messages });
             }
         }
 
-        ///Diccionario de datos 
         [HttpGet("diccionario")]
-        public async Task<IActionResult> GetEnfermedadCardiovascular()
+        public async Task<IActionResult> GetObtenerDiccionarios()
         {
-            try
+              try
             {
-                var result = await _enfermedadCardiovascularDao.GetObtener();
+                var result = await _enfermedadCardiovascularDao.GetObtenerDiccionario();
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
                 return NoContent();
             }
@@ -137,7 +112,7 @@ namespace TsaakAPI.Api.V1.Controller
                 var result = await _enfermedadCardiovascularDao.GetCatalogoCardiovasculares();
                 if (result.Success && result.Result != null)
                 {
-                    return Ok(result.Result);
+                    return Ok(result);
                 }
                 return NoContent();
             }
@@ -156,7 +131,7 @@ namespace TsaakAPI.Api.V1.Controller
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
-                return Ok(result.Result);
+                return Ok(result);
             }
             else
             {

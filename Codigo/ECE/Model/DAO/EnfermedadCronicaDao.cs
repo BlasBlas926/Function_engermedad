@@ -140,49 +140,52 @@ namespace ECE.Model.DAO
         }
 
         //Diccionario
-        public async Task<ResultOperation<Dictionary<int, Tuple<string, string, bool>>>> GetObtenerDiccionario()
+        public async Task<ResultOperation<Dictionary<int, string>>> GetObtenerDiccionario()
         {
-            ResultOperation<Dictionary<int, Tuple<string, string, bool>>> resultOperation = new ResultOperation<Dictionary<int, Tuple<string, string, bool>>>();
+            // Crear una lista de diccionarios
+            Dictionary<int, string> diccionario = new Dictionary<int, string>();
 
-            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_todos_enfermedades", null);
+            ResultOperation<Dictionary<int, string>> resultOperation = new ResultOperation<Dictionary<int, string>>();
+
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.obtener_todos_enfermedades");
             RespuestaBD respuestaBD = await respuestaBDTask;
             resultOperation.Success = !respuestaBD.ExisteError;
 
             if (!respuestaBD.ExisteError)
             {
-                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                if (respuestaBD.Data.Tables.Count > 0
+                && respuestaBD.Data.Tables[0].Rows.Count > 0)
                 {
-                    Dictionary<int, Tuple<string, string, bool>> dictionary = new Dictionary<int, Tuple<string, string, bool>>();
 
-                    foreach (System.Data.DataRow item in respuestaBD.Data.Tables[0].Rows)
+                    for (int i = 0; i < respuestaBD.Data.Tables[0].Rows.Count; i++)
                     {
-                        int id = (int)item["id_enf_cronica"];
-                        string nombre = item["nombre"].ToString();
-                        string descripcion = item["descripcion"].ToString();
-                        bool estado = (bool)item["estado"];
+                        var id = (int)respuestaBD.Data.Tables[0].Rows[i]["id_enf_cronica"];
+                        var nombre = respuestaBD.Data.Tables[0].Rows[i]["nombre"].ToString();
 
-                        var value = new Tuple<string, string, bool>(nombre, descripcion, estado);
-                        dictionary.Add(id, value);
+                        diccionario.Add(id, nombre);
                     }
-
-                    resultOperation.Result = dictionary;
+                    resultOperation.Result = diccionario;
                 }
+
+
                 else
                 {
                     resultOperation.Result = null;
                     resultOperation.Success = false;
-                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuestaBD.Detail}");
+                    resultOperation.AddErrorMessage($"No se encontraron registros en la tabla.");
                 }
             }
             else
             {
-                if (respuestaBD.ExisteError)
-                    Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                // Manejo de errores (log, excepciones, etc.)
+                Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
                 throw new Exception(respuestaBD.Mensaje);
             }
 
             return resultOperation;
         }
+
+       
         public async Task<ResultOperation<int>> InsertAsync(EnfermedadCronica enfermedadCronica)
         {
             ResultOperation<int> resultOperation = new ResultOperation<int>();
