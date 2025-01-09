@@ -23,45 +23,19 @@ namespace ECE.Api.V1.Controller
             _configuration = configuration;
         }
         [HttpGet("Paginacion")]
-        public async Task<IActionResult> GetEnfermedadCronica([FromQuery] PaginacionDTO paginacion)
+        public async Task<IActionResult> GetEnfermedadCronica([FromQuery] int page, [FromQuery] int fetch)
         {
-            try
+            var result = await _enfermedadCronicaDao.GetPaginacion(page, fetch);
+            if (result.Success)
             {
-                var result = await _enfermedadCronicaDao.GetAllAsync();
-
-                if (result.Success && result.Result != null)
-                {
-                    var totalItems = result.Result.Count();
-                    var pagedItems = result.Result
-                        .Skip((paginacion.Pagina - 1) * paginacion.RecordsPorPagina)
-                        .Take(paginacion.RecordsPorPagina)
-                        .ToList();
-
-                    var pager = new ActivoFijoAPI.Util.Pager(
-                        paginacion.Pagina,
-                        paginacion.RecordsPorPagina,
-                        totalItems
-                    );
-
-                    var response = new ActivoFijoAPI.Util.DataTableView<TsaakAPI.Entities.VMCatalog>(
-                        pager,
-                        pagedItems
-                    );
-
-                    return Ok(response);
-                }
-
-                return NoContent();
+                return Ok(result);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, new
-                {
-                    message = "Ocurrió un error inesperado.",
-                    details = ex.Message
-                });
+                return BadRequest(new { message = result.Messages });
             }
         }
+
 
         [HttpGet("ObtenerEnfermedadCronica")]
         public async Task<IActionResult> GetEnfermedades()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using ActivoFijoAPI.Util;
@@ -88,6 +89,57 @@ namespace ECE.Model.DAO
             {
                 resultOperation.AddErrorMessage($"Error al ejecutar la función admece.obtener_enfermedades_cronicas. {respuestaBD.Detail}");
             }
+            return resultOperation;
+        }
+        public async Task<ResultOperation<DataTableView<VMCatalog>>> GetPaginacion(int page, int fetch)
+        {
+           ResultOperation<DataTableView<VMCatalog>> resultOperation = new ResultOperation<DataTableView<VMCatalog>>();
+
+            // Crear los parámetros de la función PostgreSQL
+            var parameters = new ConnectionTools.DBTools.ParameterPGsql[]
+            {
+                new ParameterPGsql("p_page", NpgsqlTypes.NpgsqlDbType.Integer, page),
+                new ParameterPGsql("p_fetch", NpgsqlTypes.NpgsqlDbType.Integer, fetch)
+            };
+
+            // Llamar a la función con los parámetros correctos
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.fn_get_all_page_fetch_cronica", parameters);
+
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    List<VMCatalog> catalogos = respuestaBD.Data.Tables[0].AsEnumerable()
+                        .Select(row => new VMCatalog
+                        {
+                            Id = (int)row["id_enf_cronica"],
+                            Nombre = row["nombre"].ToString(),
+                            Descripcion = row["descripcion"].ToString(),
+                            Estado = (bool?)row["estado"]
+                        }).ToList();
+
+                    Pager pager = new Pager(page, fetch, respuestaBD.Data.Tables[0].Rows.Count);
+
+                    DataTableView<VMCatalog> dataTableView = new DataTableView<VMCatalog>(pager, catalogos);
+
+                    resultOperation.Result = dataTableView;
+                }
+                else
+                {
+                    resultOperation.Result = null;
+                    resultOperation.Success = false;
+                    resultOperation.AddErrorMessage("No se encontraron registros en la tabla.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
+
             return resultOperation;
         }
         ///EnfermedadCronica
@@ -185,7 +237,7 @@ namespace ECE.Model.DAO
             return resultOperation;
         }
 
-       
+
         public async Task<ResultOperation<int>> InsertAsync(EnfermedadCronica enfermedadCronica)
         {
             ResultOperation<int> resultOperation = new ResultOperation<int>();

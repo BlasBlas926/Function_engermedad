@@ -112,44 +112,56 @@ namespace TsaakAPI.Model.DAO
             return resultOperation;
         }
 
-        public async Task<ResultOperation<DataTableView<VMCatalog>>> GetObtenerEnfermedad(int page, int fetch)
+       public async Task<ResultOperation<DataTableView<VMCatalog>>> GetPageFetchPostgrestql(int page, int fetch)
         {
             ResultOperation<DataTableView<VMCatalog>> resultOperation = new ResultOperation<DataTableView<VMCatalog>>();
 
-            var ParameterPGsql = new ConnectionTools.DBTools.ParameterPGsql[]{
-            new ParameterPGsql("p_pagina",NpgsqlTypes.NpgsqlDbType.Integer, page),
-            new ParameterPGsql("p_records_por_pagina",NpgsqlTypes.NpgsqlDbType.Integer,fetch)
-            };
-            Task<RespuestaBD> respuestaBD = _sqlTools.ExecuteFunctionAsync("admece.obtener_enfermedades_cardiovasculares_con_paginacion");
-            RespuestaBD respuesta = await respuestaBD;
-            resultOperation.Success = !respuesta.ExisteError;
-            if (!respuesta.ExisteError)
+            // Crear los parámetros de la función PostgreSQL
+            var parameters = new ConnectionTools.DBTools.ParameterPGsql[]
             {
-                if (respuesta.Data.Tables.Count > 0 && respuesta.Data.Tables[0].Rows.Count > 0)
-                {
-                    List<VMCatalog> lista = respuesta.Data.Tables[0].AsEnumerable().
-                    Select(row => new VMCatalog
-                    {
-                        Id = (int)row["id_enf_cardiovascular"],
-                        Nombre = row["nombre"].ToString(),
-                        Descripcion = row["descripcion"].ToString(),
-                        Estado = (bool?)row["estado"]
-                    }).ToList();
+                new ParameterPGsql("p_page", NpgsqlTypes.NpgsqlDbType.Integer, page),
+                new ParameterPGsql("p_fetch", NpgsqlTypes.NpgsqlDbType.Integer, fetch)
+            };
 
-                    Pager pager = new Pager(page, fetch, respuesta.Data.Tables[0].Rows.Count);
-                    DataTableView<VMCatalog> dataTableView = new DataTableView<VMCatalog>(pager, lista);
+            // Llamar a la función con los parámetros correctos
+            Task<RespuestaBD> respuestaBDTask = _sqlTools.ExecuteFunctionAsync("admece.fn_get_all_page_fetch", parameters);
+
+            RespuestaBD respuestaBD = await respuestaBDTask;
+            resultOperation.Success = !respuestaBD.ExisteError;
+
+            if (!respuestaBD.ExisteError)
+            {
+                if (respuestaBD.Data.Tables.Count > 0 && respuestaBD.Data.Tables[0].Rows.Count > 0)
+                {
+                    List<VMCatalog> catalogos = respuestaBD.Data.Tables[0].AsEnumerable()
+                        .Select(row => new VMCatalog
+                        {
+                            Id = (int)row["id_enf_cardiovascular"],
+                            Nombre = row["nombre"].ToString(),
+                            Descripcion = row["descripcion"].ToString(),
+                            Estado = (bool?)row["estado"]
+                        }).ToList();
+
+                    Pager pager = new Pager(page, fetch, respuestaBD.Data.Tables[0].Rows.Count);
+
+                    DataTableView<VMCatalog> dataTableView = new DataTableView<VMCatalog>(pager, catalogos);
+
                     resultOperation.Result = dataTableView;
                 }
                 else
                 {
                     resultOperation.Result = null;
                     resultOperation.Success = false;
-                    resultOperation.AddErrorMessage($"No fue posible regresar el registro de la tabla. {respuesta.Detail}");
+                    resultOperation.AddErrorMessage("No se encontraron registros en la tabla.");
                 }
-
             }
-            return resultOperation;
+            else
+            {
+                Console.WriteLine("Error {0} - {1} - {2} - {3}", respuestaBD.ExisteError, respuestaBD.Mensaje, respuestaBD.CodeSqlError, respuestaBD.Detail);
+                throw new Exception(respuestaBD.Mensaje);
+            }
 
+            return resultOperation;
         }
         ///Lista de enfermedades cardiovasculares
         // public async Task<ResultOperation<List<VMCatalog>>> GetObtenerEnfermedad()
@@ -247,7 +259,7 @@ namespace TsaakAPI.Model.DAO
         }
          public async Task<ResultOperation<Dictionary<int, string>>> GetDiccionario()
         {
-            // Crear una lista de diccionarios
+            
             Dictionary<int, string> diccionario = new Dictionary<int, string>();
 
             ResultOperation<Dictionary<int, string>> resultOperation = new ResultOperation<Dictionary<int, string>>();

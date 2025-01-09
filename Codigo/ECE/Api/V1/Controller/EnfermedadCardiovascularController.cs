@@ -73,7 +73,7 @@ namespace TsaakAPI.Api.V1.Controller
         public async Task<IActionResult> GetEnfermedadCardiovascular([FromQuery] int page, [FromQuery] int fetch)
         {
 
-            var result = await _enfermedadCardiovascularDao.GetObtenerEnfermedad(page, fetch);
+            var result = await _enfermedadCardiovascularDao.GetPageFetchPostgrestql(page, fetch);
             if (result.Success)
             {
                 // Si es exitosa, devuelve el resultado con un estado 200 OK
