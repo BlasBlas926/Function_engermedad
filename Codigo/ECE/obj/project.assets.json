@@ -568,11 +568,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\ECE.csproj",
+      "projectUniqueName": "C:\\Users\\joblas\\GIT\\Function_engermedad\\Codigo\\ECE\\ECE.csproj",
       "projectName": "ECE",
-      "projectPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\ECE.csproj",
+      "projectPath": "C:\\Users\\joblas\\GIT\\Function_engermedad\\Codigo\\ECE\\ECE.csproj",
       "packagesPath": "C:\\Users\\joblas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\joblas\\Pictures\\Ejercicio\\codigo\\ECE\\obj\\",
+      "outputPath": "C:\\Users\\joblas\\GIT\\Function_engermedad\\Codigo\\ECE\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -605,8 +605,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.100"
+      }
     },
     "frameworks": {
       "net6.0": {
@@ -644,7 +643,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -653,7 +652,7 @@
       "code": "NU1903",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "El paquete \"Npgsql\" 6.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c",
+      "message": "Package 'Npgsql' 6.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c",
       "libraryId": "Npgsql",
       "targetGraphs": [
         "net6.0"
